@@ -13,7 +13,7 @@ rule Mariachi_tolanjude
         $dns_ioc    = ".fake-c2-evil.edu" ascii wide
 
         // --- Data collection / staging artifacts ---
-        $log_name   = "\log.txt" ascii wide
+        $log_name   = "\\log.txt" ascii wide
         $ip_marker  = "Private IP:" ascii wide
         $time_mark  = "Timestamp:" ascii wide
 
