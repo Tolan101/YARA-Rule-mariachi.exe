@@ -1,0 +1,42 @@
+rule Mariachi_tolanjude
+{
+    meta:
+        author      = "Tolan and Jude"
+        created     = "2026-01-07"
+        description = "Identifies MariachiJava-like malware through several indicators"
+        severity    = "high"
+        tlp         = "amber"
+
+    strings:
+        // --- Malware identity indicators ---
+        $mj_mutex   = "Global\\MariachiJavaMutex_2025" ascii wide
+        $dns_ioc    = ".fake-c2-evil.edu" ascii wide
+
+        // --- Data collection / staging artifacts ---
+        $log_name   = "\log.txt" ascii wide
+        $ip_marker  = "Private IP:" ascii wide
+        $time_mark  = "Timestamp:" ascii wide
+
+        // --- Persistence mechanism ---
+        $reg_path   = "Software\\Microsoft\\Windows\\CurrentVersion\\Run" ascii wide
+        $reg_value  = "JavaUpdateHelper" ascii wide
+
+        // --- Execution context ---
+        $admin_chk  = "IsUserAnAdmin" ascii wide
+
+    condition:
+        // Windows PE validation
+        uint16(0) == 0x5A4D and
+
+        // Core malware identity
+        $mj_mutex and $dns_ioc and
+
+        // All logging indicators must exist
+        $log_name and $ip_marker and $time_mark and
+
+        // Persistence via HKCU Run key
+        $reg_path and $reg_value and
+
+        // Privilege awareness
+        $admin_chk
+}
